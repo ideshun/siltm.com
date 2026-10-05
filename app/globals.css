@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  /* 设计令牌：色彩（docs/website-design-proposal.md §3.4） */
+  --color-abyss: #0a0a0f;
+  --color-abyss-2: #12121c;
+  --color-line: #23233a;
+  --color-indigo: #6c5ce7;
+  --color-cyan: #00f0ff;
+  --color-amber: #ffb800;
+  --color-fog: #9a9ab0;
+  --color-ice: #eaeaf2;
+
+  /* 字体系统：等宽字体仅用于数据与"记忆片段"，暗示机器记忆 */
+  --font-display: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+  --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-abyss text-ice font-body antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-indigo);
+  color: var(--color-ice);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-indigo);
+}
+
+/* 主色渐变文字：数据流动感 */
+.text-gradient {
+  background: linear-gradient(100deg, var(--color-indigo) 10%, var(--color-cyan) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 导航毛玻璃 */
+.glass {
+  background: color-mix(in srgb, var(--color-abyss) 62%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* 按钮流光扫过（hover 微交互） */
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 70%);
+  transform: translateX(-110%);
+  transition: transform 0.6s var(--ease-fluid);
+}
+.btn-sheen:hover::after,
+.btn-sheen:focus-visible::after {
+  transform: translateX(110%);
+}
+
+/* 自定义光标接管时隐藏系统光标（仅精确指针设备） */
+@media (pointer: fine) {
+  .cursor-none-fine,
+  .cursor-none-fine a,
+  .cursor-none-fine button,
+  .cursor-none-fine input,
+  .cursor-none-fine [role="button"] {
+    cursor: none;
+  }
+}
+
+/* 减弱动效偏好：全站降级 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
