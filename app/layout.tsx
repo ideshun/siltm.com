@@ -13,11 +13,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://siltm.com"),
   title: "SILTM — Super Intelligence Long-Term Memory",
   description:
-    "Long-term memory infrastructure for AI agents. Your AI remembers. 让智能，记得住。",
+    "Long-term memory infrastructure for AI agents. Your AI remembers.",
   keywords: ["SILTM", "AI agent", "long-term memory", "super intelligence", "memory infrastructure"],
   openGraph: {
     title: "SILTM — Your AI remembers.",
-    description: "Long-term memory infrastructure for AI agents. 让智能，记得住。",
+    description: "Long-term memory infrastructure for AI agents. Your AI remembers.",
     url: "https://siltm.com",
     siteName: "SILTM",
     type: "website",

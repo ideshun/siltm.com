@@ -61,10 +61,10 @@ export function Nav() {
             <button
               type="button"
               onClick={toggle}
-              aria-label={lang === "en" ? "切换到中文" : "Switch to English"}
+              aria-label="Switch language / 切换语言"
               className="flex min-h-11 items-center rounded-full border border-line px-4 font-mono text-xs tracking-widest text-fog transition-colors hover:border-cyan/60 hover:text-ice"
             >
-              {lang === "en" ? "中文" : "EN"}
+              中 / EN
             </button>
             <a
               href="#join"

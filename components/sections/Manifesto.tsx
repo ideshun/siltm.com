@@ -65,12 +65,6 @@ export function Manifesto() {
             </span>
           ))}
         </h2>
-        <p
-          className="mt-8 font-mono text-sm tracking-[0.2em] text-fog transition-opacity duration-700"
-          style={{ opacity: progress > 0.85 ? 0.9 : 0 }}
-        >
-          {t.sub[lang]}
-        </p>
       </div>
     </section>
   );

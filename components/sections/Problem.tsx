@@ -71,7 +71,7 @@ export function Problem() {
               <div className="rounded-2xl border border-line bg-abyss-2/70 p-6">
                 <div className="flex items-baseline justify-between">
                   <span className="font-mono text-[10px] tracking-[0.3em] text-fog">
-                    CONTEXT WINDOW
+                    {t.contextWindow[lang]}
                   </span>
                   <span
                     className={`font-mono text-[10px] tracking-[0.3em] ${

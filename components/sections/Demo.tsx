@@ -103,7 +103,7 @@ export function Demo() {
                   type="submit"
                   className="btn-sheen min-h-11 rounded-lg bg-indigo px-5 font-mono text-xs tracking-widest text-ice transition-colors hover:bg-indigo/80"
                 >
-                  STORE
+                  {t.store[lang]}
                 </button>
                 <button
                   type="button"
@@ -111,7 +111,7 @@ export function Demo() {
                   disabled={!nodes.length || recalling}
                   className="btn-sheen min-h-11 rounded-lg border border-amber/50 px-5 font-mono text-xs tracking-widest text-amber transition-colors hover:border-amber disabled:opacity-30"
                 >
-                  RECALL
+                  {t.recall[lang]}
                 </button>
               </div>
             </form>
