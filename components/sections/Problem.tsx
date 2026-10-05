@@ -5,7 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { useLang, dict } from "@/lib/i18n";
 
-/** 失忆之痛：滚动驱动 token 计数器爆表，记忆片段逐条消散 */
+/** 失忆之痛：滚动驱动 token 计数器爆表，记忆片段逐条浮现 */
 export function Problem() {
   const sectionRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
@@ -100,27 +100,23 @@ export function Problem() {
               </div>
             </Reveal>
 
-            {/* 消散的记忆片段 */}
+            {/* 滚动浮现的记忆片段 */}
             <div className="flex flex-col gap-2">
               {fragments.map((f, i) => {
-                const gone = progress > 0.35 + i * 0.09;
+                // 先模糊隐藏，随滚动逐条清晰浮现
+                const shown = progress > 0.12 + i * 0.09;
                 return (
                   <div
                     key={f}
                     className="flex items-center gap-3 rounded-lg border border-line/60 px-4 py-2.5 font-mono text-sm transition-all duration-700"
                     style={{
-                      opacity: gone ? 0.12 : 0.85,
-                      filter: gone ? "blur(3px)" : "none",
-                      transform: gone ? "translateY(-6px)" : "none",
+                      opacity: shown ? 0.85 : 0.12,
+                      filter: shown ? "none" : "blur(3px)",
+                      transform: shown ? "none" : "translateY(6px)",
                     }}
                   >
-                    <span className={`h-1.5 w-1.5 rounded-full ${gone ? "bg-line" : "bg-cyan"}`} />
+                    <span className={`h-1.5 w-1.5 rounded-full ${shown ? "bg-cyan" : "bg-line"}`} />
                     <span className="text-fog">{f}</span>
-                    {gone && (
-                      <span className="ml-auto text-[10px] tracking-widest text-line">
-                        {t.lost[lang]}
-                      </span>
-                    )}
                   </div>
                 );
               })}

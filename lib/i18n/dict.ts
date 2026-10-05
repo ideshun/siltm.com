@@ -27,7 +27,6 @@ export const dict = {
     contextWindow: { en: "CONTEXT WINDOW", zh: "上下文窗口" },
     filling: { en: "FILLING", zh: "填充中" },
     overflow: { en: "OVERFLOW", zh: "溢出" },
-    lost: { en: "LOST", zh: "已丢失" },
     fragments: {
       en: [
         "user prefers dark mode",
