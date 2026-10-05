@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { useLang, dict } from "@/lib/i18n";
 
-const METRICS = [
-  { value: 98.7, suffix: "%", label: "Recall accuracy", desc: "跨会话长期召回准确率" },
-  { value: 8, suffix: "ms", label: "Retrieval latency", desc: "P95 检索延迟" },
-  { value: 40, suffix: "×", label: "Compression ratio", desc: "记忆压缩比" },
+const VALUES = [
+  { value: 98.7, suffix: "%" },
+  { value: 8, suffix: "ms" },
+  { value: 40, suffix: "×" },
 ] as const;
 
 function CountUp({ target, suffix }: { target: number; suffix: string }) {
@@ -52,22 +53,26 @@ function CountUp({ target, suffix }: { target: number; suffix: string }) {
 }
 
 export function Numbers() {
+  const { lang } = useLang();
+  const t = dict.numbers;
+  const metrics = t.metrics[lang];
+
   return (
     <section id="numbers" className="relative px-6 py-[160px]">
       <div className="mx-auto max-w-[1200px]">
         <Reveal>
-          <p className="mb-4 font-mono text-xs tracking-[0.35em] text-fog">05 / EMERGING</p>
+          <p className="mb-4 font-mono text-xs tracking-[0.35em] text-fog">{t.kicker[lang]}</p>
           <h2 className="font-display text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
-            Memory, <span className="text-gradient">measured.</span>
+            {t.titleA[lang]} <span className="text-gradient">{t.titleB[lang]}</span>
           </h2>
         </Reveal>
         <div className="mt-16 grid gap-12 md:grid-cols-3 md:gap-8">
-          {METRICS.map((m, i) => (
-            <Reveal key={m.label} delay={i * 120}>
+          {VALUES.map((v, i) => (
+            <Reveal key={metrics[i].label} delay={i * 120}>
               <div className="border-l border-line pl-6">
-                <CountUp target={m.value} suffix={m.suffix} />
-                <p className="mt-2 font-mono text-xs tracking-[0.2em] text-ice">{m.label}</p>
-                <p className="mt-1 font-mono text-[11px] text-fog">{m.desc}</p>
+                <CountUp target={v.value} suffix={v.suffix} />
+                <p className="mt-2 font-mono text-xs tracking-[0.2em] text-ice">{metrics[i].label}</p>
+                <p className="mt-1 font-mono text-[11px] text-fog">{metrics[i].desc}</p>
               </div>
             </Reveal>
           ))}

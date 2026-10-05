@@ -2,15 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { useLang, dict } from "@/lib/i18n";
 
-const LINE = "Memory is not storage. Memory is gravity.";
-const SUB = "记忆不是储存，是引力。";
-
-/** 宣言区：整屏一句话，随滚动逐词点亮 */
+/** 宣言区：整屏一句话，随滚动逐词点亮（中文按字切分） */
 export function Manifesto() {
   const ref = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const reduced = useReducedMotion();
+  const { lang } = useLang();
+  const t = dict.manifesto;
 
   useEffect(() => {
     if (reduced) {
@@ -36,15 +36,18 @@ export function Manifesto() {
     };
   }, [reduced]);
 
-  const words = LINE.split(" ");
-  const litCount = Math.floor(progress * 1.15 * words.length);
+  const line = t.line[lang];
+  // 英文按词点亮；中文按短句（顿号/逗号切分）点亮
+  const words = lang === "zh" ? line.split(/(?=[，。、])/u).flatMap((s) => s.split("")) : line.split(" ");
+  const units = lang === "zh" ? Array.from(line) : words;
+  const litCount = Math.floor(progress * 1.15 * units.length);
 
   return (
     <section id="manifesto" ref={ref} className="relative min-h-[200svh]">
       <div className="sticky top-0 flex min-h-svh flex-col items-center justify-center px-6 text-center">
-        <p className="mb-8 font-mono text-xs tracking-[0.35em] text-fog">06 / MANIFESTO</p>
+        <p className="mb-8 font-mono text-xs tracking-[0.35em] text-fog">{t.kicker[lang]}</p>
         <h2 className="max-w-[16ch] font-display text-[clamp(2.2rem,6vw,5rem)] font-semibold leading-[1.1] tracking-[-0.03em]">
-          {words.map((w, i) => (
+          {units.map((w, i) => (
             <span
               key={i}
               className="inline-block transition-all duration-500"
@@ -53,12 +56,12 @@ export function Manifesto() {
                 filter: i < litCount ? "none" : "blur(1px)",
               }}
             >
-              {i === words.length - 1 ? (
+              {i >= units.length - 1 ? (
                 <span className="text-gradient">{w}</span>
               ) : (
                 w
               )}
-              {"\u00A0"}
+              {lang === "en" ? "\u00A0" : ""}
             </span>
           ))}
         </h2>
@@ -66,7 +69,7 @@ export function Manifesto() {
           className="mt-8 font-mono text-sm tracking-[0.2em] text-fog transition-opacity duration-700"
           style={{ opacity: progress > 0.85 ? 0.9 : 0 }}
         >
-          {SUB}
+          {t.sub[lang]}
         </p>
       </div>
     </section>

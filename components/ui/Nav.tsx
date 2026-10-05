@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLang, dict } from "@/lib/i18n";
 
 const SECTIONS = [
   { id: "hero", label: "00" },
@@ -17,6 +18,7 @@ const SECTIONS = [
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("hero");
+  const { lang, toggle } = useLang();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -54,12 +56,23 @@ export function Nav() {
           >
             SILTM<span className="text-cyan">.</span>
           </a>
-          <a
-            href="#join"
-            className="btn-sheen rounded-full border border-amber/50 px-5 py-2 font-mono text-xs tracking-widest text-amber transition-colors hover:border-amber"
-          >
-            JOIN WAITLIST
-          </a>
+          <div className="flex items-center gap-3">
+            {/* 中英切换：EN 态提示可切中文，反之亦然 */}
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label={lang === "en" ? "切换到中文" : "Switch to English"}
+              className="flex min-h-11 items-center rounded-full border border-line px-4 font-mono text-xs tracking-widest text-fog transition-colors hover:border-cyan/60 hover:text-ice"
+            >
+              {lang === "en" ? "中文" : "EN"}
+            </button>
+            <a
+              href="#join"
+              className="btn-sheen hidden rounded-full border border-amber/50 px-5 py-2 font-mono text-xs tracking-widest text-amber transition-colors hover:border-amber sm:inline-block"
+            >
+              {dict.nav.join[lang]}
+            </a>
+          </div>
         </nav>
       </header>
 

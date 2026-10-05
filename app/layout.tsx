@@ -4,6 +4,7 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 import { LenisProvider } from "@/lib/lenis-provider";
+import { I18nProvider } from "@/lib/i18n";
 import { Cursor } from "@/components/ui/Cursor";
 import { Nav } from "@/components/ui/Nav";
 import { Intro } from "@/components/Intro";
@@ -33,12 +34,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <LenisProvider>
-          <Intro />
-          <Cursor />
-          <Nav />
-          {children}
-        </LenisProvider>
+        <I18nProvider>
+          <LenisProvider>
+            <Intro />
+            <Cursor />
+            <Nav />
+            {children}
+          </LenisProvider>
+        </I18nProvider>
       </body>
     </html>
   );

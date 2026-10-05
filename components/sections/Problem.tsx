@@ -3,20 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
-
-const FRAGMENTS = [
-  "user prefers dark mode",
-  "project deadline is Friday",
-  "allergic to peanuts",
-  "use pnpm, not npm",
-  "my daughter's name is…",
-];
+import { useLang, dict } from "@/lib/i18n";
 
 /** 失忆之痛：滚动驱动 token 计数器爆表，记忆片段逐条消散 */
 export function Problem() {
   const sectionRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const reduced = useReducedMotion();
+  const { lang } = useLang();
+  const t = dict.problem;
+  const fragments = t.fragments[lang];
 
   useEffect(() => {
     if (reduced) {
@@ -54,18 +50,17 @@ export function Problem() {
           <div>
             <Reveal>
               <p className="mb-4 font-mono text-xs tracking-[0.35em] text-fog">
-                01 / FORGETTING
+                {t.kicker[lang]}
               </p>
               <h2 className="font-display text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
-                Every session,
+                {t.titleA[lang]}
                 <br />
-                your AI starts
+                {t.titleB[lang]}
                 <br />
-                <span className="text-fog">from zero.</span>
+                <span className="text-fog">{t.titleC[lang]}</span>
               </h2>
               <p className="mt-6 max-w-[52ch] leading-[1.65] text-fog">
-                Context windows overflow. Conversations evaporate. What your
-                agent learned yesterday is gone today — brilliance, amnesiac.
+                {t.desc[lang]}
               </p>
             </Reveal>
           </div>
@@ -83,7 +78,7 @@ export function Problem() {
                       exploded ? "text-amber" : "text-fog"
                     }`}
                   >
-                    {exploded ? "OVERFLOW" : "FILLING"}
+                    {exploded ? t.overflow[lang] : t.filling[lang]}
                   </span>
                 </div>
                 <div
@@ -107,7 +102,7 @@ export function Problem() {
 
             {/* 消散的记忆片段 */}
             <div className="flex flex-col gap-2">
-              {FRAGMENTS.map((f, i) => {
+              {fragments.map((f, i) => {
                 const gone = progress > 0.35 + i * 0.09;
                 return (
                   <div
@@ -122,7 +117,9 @@ export function Problem() {
                     <span className={`h-1.5 w-1.5 rounded-full ${gone ? "bg-line" : "bg-cyan"}`} />
                     <span className="text-fog">{f}</span>
                     {gone && (
-                      <span className="ml-auto text-[10px] tracking-widest text-line">LOST</span>
+                      <span className="ml-auto text-[10px] tracking-widest text-line">
+                        {t.lost[lang]}
+                      </span>
                     )}
                   </div>
                 );

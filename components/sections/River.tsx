@@ -3,40 +3,21 @@
 import { useEffect, useRef } from "react";
 import { loadGsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { useLang, dict } from "@/lib/i18n";
 import { Reveal } from "@/components/ui/Reveal";
 
-const MEMORIES = [
-  {
-    tag: "EPISODIC",
-    name: "Episodic",
-    desc: "What happened, when it happened. Every conversation, every decision — replayable on demand.",
-    zh: "情景记忆 · 每一次对话皆成往事，皆可回放",
-  },
-  {
-    tag: "SEMANTIC",
-    name: "Semantic",
-    desc: "Facts, concepts, relationships. The distilled knowledge your agent reasons with.",
-    zh: "语义记忆 · 事实与关系，沉淀为可推理的知识",
-  },
-  {
-    tag: "PROCEDURAL",
-    name: "Procedural",
-    desc: "How things get done. Workflows and preferences, compiled into instinct.",
-    zh: "程序记忆 · 流程与偏好，编译成本能",
-  },
-  {
-    tag: "WORKING",
-    name: "Working",
-    desc: "The live current. What's relevant right now, surfaced in milliseconds.",
-    zh: "工作记忆 · 当下的洪流，毫秒级浮现",
-  },
-] as const;
-
-/** 记忆流河：桌面端 GSAP 横向滚动画廊，移动端纵向堆叠 */
+/**
+ * 记忆流河：桌面端 GSAP 横向滚动画廊，移动端纵向堆叠。
+ * pin 整个 section（一屏高）：进入即钉住，纵向滚动距离严格等于
+ * 轨道超宽部分，保证 pin 结束时 04 卡片完整停在最右、随即可见下一区块。
+ */
 export function River() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const { lang } = useLang();
+  const t = dict.river;
+  const cards = t.cards[lang];
 
   useEffect(() => {
     if (reduced || window.innerWidth < 768) return;
@@ -46,21 +27,26 @@ export function River() {
 
     let cleanup: (() => void) | undefined;
     let cancelled = false;
-    loadGsap().then(({ gsap }) => {
+    loadGsap().then(({ gsap, ScrollTrigger }) => {
       if (cancelled) return;
-      const distance = track.scrollWidth - window.innerWidth;
+      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
       const tween = gsap.to(track, {
-        x: -distance,
+        x: () => -distance(),
         ease: "none",
         scrollTrigger: {
           trigger: wrap,
           start: "top top",
-          end: () => `+=${distance}`,
+          // 略加 10% 余量：确保松开 pin 前 04 卡片已完整入画
+          end: () => `+=${distance() * 1.1}`,
           pin: true,
           scrub: 0.6,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
+      // 字体/图片加载后再校准一次，避免 pin 距离算早
+      const refresh = () => ScrollTrigger.refresh();
+      if (document.fonts?.ready) document.fonts.ready.then(refresh).catch(() => {});
       cleanup = () => {
         tween.scrollTrigger?.kill();
         tween.kill();
@@ -73,28 +59,25 @@ export function River() {
   }, [reduced]);
 
   return (
-    <section id="river" className="relative">
-      <div className="px-6 pt-[160px]">
+    <section id="river" ref={wrapRef} className="relative pt-[120px] md:flex md:min-h-svh md:flex-col md:justify-center md:pt-0">
+      <div className="px-6">
         <Reveal className="mx-auto max-w-[1200px]">
-          <p className="mb-4 font-mono text-xs tracking-[0.35em] text-fog">02 / STORING</p>
+          <p className="mb-4 font-mono text-xs tracking-[0.35em] text-fog">{t.kicker[lang]}</p>
           <h2 className="font-display text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
-            Memory is a river,
+            {t.titleA[lang]}
             <br />
-            <span className="text-gradient">not a warehouse.</span>
+            <span className="text-gradient">{t.titleB[lang]}</span>
           </h2>
-          <p className="mt-6 max-w-[52ch] leading-[1.65] text-fog">
-            Four currents, one flow. SILTM organizes every kind of memory as it
-            streams in — no tables, no silos, no forgetting.
-          </p>
+          <p className="mt-6 max-w-[52ch] leading-[1.65] text-fog">{t.desc[lang]}</p>
         </Reveal>
       </div>
 
-      <div ref={wrapRef} className="mt-16 md:overflow-hidden">
+      <div className="mt-12 md:mt-16 md:overflow-hidden">
         <div
           ref={trackRef}
-          className="flex flex-col gap-6 px-6 pb-[160px] md:w-max md:flex-row md:gap-8 md:pl-[max(24px,calc(50vw-600px))]"
+          className="flex flex-col gap-6 px-6 pb-[160px] md:w-max md:flex-row md:gap-8 md:pb-0 md:pl-[max(24px,calc(50vw-600px))] md:pr-[max(24px,calc(50vw-600px))]"
         >
-          {MEMORIES.map((m, i) => (
+          {cards.map((m, i) => (
             <article
               key={m.tag}
               className="group relative w-full shrink-0 overflow-hidden rounded-2xl border border-line bg-abyss-2/60 p-8 transition-colors duration-300 hover:border-indigo/60 md:w-[420px]"
@@ -107,7 +90,7 @@ export function River() {
                 {m.name}
               </h3>
               <p className="mt-4 leading-[1.65] text-fog">{m.desc}</p>
-              <p className="mt-6 font-mono text-xs leading-[1.8] text-fog/70">{m.zh}</p>
+              <p className="mt-6 font-mono text-xs leading-[1.8] text-fog/70">{m.sub}</p>
               <span className="pointer-events-none absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-indigo/10 blur-3xl transition-opacity duration-500 group-hover:bg-cyan/15" />
             </article>
           ))}
