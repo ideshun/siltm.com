@@ -91,7 +91,10 @@ function MemoryCloud() {
             vAlpha = 0.55 + 0.45 * sin(t + aSeed);
 
             vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
-            gl_PointSize = uSize * (1.0 + push * 0.8) * (300.0 / -mvPosition.z);
+            // 相机后方的粒子 -mvPosition.z<=0，除法会让点尺寸爆炸成巨块，直接藏掉
+            if (mvPosition.z >= -0.1) vAlpha = 0.0;
+            float perspective = 300.0 / max(4.0, -mvPosition.z);
+            gl_PointSize = clamp(uSize * (1.0 + push * 0.8) * perspective, 1.0, 9.0);
             gl_Position = projectionMatrix * mvPosition;
           }
         `,
@@ -100,9 +103,9 @@ function MemoryCloud() {
           varying float vAlpha;
           void main() {
             float d = distance(gl_PointCoord, vec2(0.5));
-            if (d > 0.5) discard;
+            if (d > 0.5 || vAlpha <= 0.0) discard;
             float glow = smoothstep(0.5, 0.0, d);
-            gl_FragColor = vec4(vColor, glow * vAlpha * 0.85);
+            gl_FragColor = vec4(vColor, glow * glow * vAlpha * 0.7);
           }
         `,
       }),
