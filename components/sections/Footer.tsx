@@ -12,11 +12,11 @@ export function Footer() {
   const t = dict.footer;
 
   return (
-    <footer id="join" className="relative px-6 pb-12 pt-[160px]">
+    <footer id="join" className="relative px-6 pb-12 pt-[120px]">
       {/* 半圆呼吸分隔：居中 1px 渐变线向两侧淡出，替代通栏边框 */}
       <div
         aria-hidden
-        className="mx-auto h-px w-full max-w-[1200px] bg-gradient-to-r from-transparent via-ice/25 to-transparent"
+        className="mx-auto mb-[64px] h-px w-full max-w-[1200px] bg-gradient-to-r from-transparent via-ice/25 to-transparent"
       />
       <div className="mx-auto max-w-[1200px]">
         <Reveal className="flex flex-col items-center text-center">
